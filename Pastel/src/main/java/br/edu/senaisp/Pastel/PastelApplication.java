@@ -1,4 +1,4 @@
-package com.edu.senaisp.Pastel;
+package br.edu.senaisp.Pastel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

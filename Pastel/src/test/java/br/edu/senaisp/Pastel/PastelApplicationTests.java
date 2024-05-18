@@ -1,4 +1,4 @@
-package com.edu.senaisp.Pastel;
+package br.edu.senaisp.Pastel;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
