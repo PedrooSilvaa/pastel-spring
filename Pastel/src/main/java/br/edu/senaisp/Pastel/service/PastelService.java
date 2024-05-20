@@ -1,8 +1,12 @@
 package br.edu.senaisp.Pastel.service;
 
 
+import br.edu.senaisp.Pastel.exception.DataInvalidException;
+import br.edu.senaisp.Pastel.exception.PastelNotFoundException;
+import br.edu.senaisp.Pastel.exception.PastelUniqueViolationException;
 import br.edu.senaisp.Pastel.model.Pastel;
 import br.edu.senaisp.Pastel.repository.IPastelRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +25,8 @@ public class PastelService {
     public Pastel salvar(Pastel pastel){
         try {
         return pastelRepository.save(pastel);
-        }catch (Exception e){
-            throw new RuntimeException();
+        }catch (DataIntegrityViolationException ex){
+            throw new PastelUniqueViolationException(String.format("Pastel do sabor %s já registrado", pastel.getSabor()));
         }
     }
 
@@ -34,15 +38,20 @@ public class PastelService {
     @Transactional(readOnly = true)
     public Pastel buscarPorId(int id){
         return pastelRepository.findById(id).orElseThrow(
-                    RuntimeException::new
+                () -> new PastelNotFoundException(String.format("Pastel id = %s não encontrado", id))
         );
     }
 
     @Transactional
-    public Pastel altera(int id, Pastel pastel){
+    public Pastel altera(int id, String sabor, String confirmSabor, String novoSabor){
+
+        if(!sabor.equals(confirmSabor)){
+            throw new DataInvalidException("Sabor não confere");
+        }
+
         Pastel pastel1 = buscarPorId(id);
-        pastel1.setSabor(pastel.getSabor());
-        pastel1.setAcompanhamneto(pastel.getAcompanhamneto());
+
+        pastel1.setSabor(novoSabor);
         return pastel1;
     }
 
